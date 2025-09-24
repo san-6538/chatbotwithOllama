@@ -1,30 +1,26 @@
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.document_loaders import PyPDFLoader
-import config
 import os
+from pypdf import PdfReader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import OllamaEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.document_loaders import TextLoader
 
-# 1. Load PDF
-loader = PyPDFLoader(config.PDF_PATH)
-documents = loader.load()  # list of Document objects
+# Load PDF
+reader = PdfReader("data/medical_encyclopedia.pdf")
+text = ""
+for page in reader.pages:
+    text += page.extract_text()
 
-# 2. Split text into chunks
-text_splitter = CharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=200
-)
-docs = text_splitter.split_documents(documents)
+# Split text into chunks
+splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+chunks = splitter.split_text(text)
 
-# 3. Create embeddings
-embeddings = OpenAIEmbeddings(openai_api_key=config.OPENAI_API_KEY)
+# Generate embeddings
+embeddings = OllamaEmbeddings(model="llama2")
 
-# 4. Build FAISS vector store
-vector_store = FAISS.from_documents(docs, embeddings)
+# Create Chroma vector store
+vector_store = Chroma.from_documents(chunks, embeddings)
 
-# 5. Save vector store
-if not os.path.exists("vector_db"):
-    os.makedirs("vector_db")
-vector_store.save_local(config.VECTOR_DB_PATH)
+# Save vector store
+vector_store.persist()
 
-print("[INFO] Vector DB built from PDF and saved at", config.VECTOR_DB_PATH)
