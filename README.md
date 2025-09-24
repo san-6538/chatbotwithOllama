@@ -1,29 +1,16 @@
-# Ollama RAG Chatbot - RAG + Agent Chatbot
+A Retrieval-Augmented Generation (RAG) chatbot for medical queries using a PDF medical encyclopedia as context.
+Powered by Ollama LLM and LangChain, this chatbot provides answers along with relevant source snippets.
 
-## 🚀 Overview
-This project is a Retrieval-Augmented Generation (RAG) chatbot with agent capabilities.  
-It has:
-- **FastAPI backend**
-- **Streamlit frontend**
-- **RAG pipeline with embeddings + vector search**
-- **Agent integration**
+Features
 
----
+Loads a PDF medical encyclopedia for context.
 
-## 🐳 Docker Setup
+Splits PDF text into chunks and stores embeddings in a Chroma vector database.
 
-### Build Image
-```bash
-docker build -t ollama-chatbot .
-```
+Uses RAG approach to retrieve relevant context before generating answers.
 
-### Run Container
-```bash
-docker run -p 8000:8000  ollama-chatbot
-```
+Maintains user-specific chat history using LangChain memory.
 
----
+Returns answers and top source snippets for verification.
 
-## 🔎 Endpoints
-- FastAPI backend: `http://localhost:8000`
-- Streamlit UI: `streamlit run ui.py`
+Fully local deployment using Ollama, no external API calls needed.
