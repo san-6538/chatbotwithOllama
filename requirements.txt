@@ -1,7 +1,6 @@
 fastapi
 uvicorn
-langchain
-langchain-community
-langchain-openai
-sentence-transformers
-streamlit
+langchain-ollama
+chromadb
+pypdf
+
